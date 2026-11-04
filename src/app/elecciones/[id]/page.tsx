@@ -6,6 +6,9 @@ import electionsData from "@/data/elections.json";
 
 export function generateStaticParams() {
   const elections = electionsData.elections as Array<{ id: string }>;
+  if (elections.length === 0) {
+    return [{ id: "no-hay-elecciones" }];
+  }
   return elections.map((e) => ({ id: e.id }));
 }
 
@@ -14,6 +17,22 @@ export default function ElectionDetailPage({
 }: {
   params: { id: string };
 }) {
+  if (params.id === "no-hay-elecciones") {
+    return (
+      <div className="min-h-screen bg-black text-white font-mono flex items-center justify-center min-h-[60vh]">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-neon-cyan to-neon-magenta bg-clip-text text-transparent">
+            Sin elecciones
+          </h1>
+          <p className="text-white/60 text-lg">
+            No hay elecciones registradas aún. Los datos se actualizan cada 30
+            minutos mediante scraping automatizado.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   const election = getElectionById(params.id);
   if (!election) notFound();
 
