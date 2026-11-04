@@ -53,10 +53,15 @@ jobs:
       - name: build sitio estático
         run: npm run build
 
+      - name: mover salida a /urna para GitHub Pages project site
+        run: |
+          mkdir -p out/urna
+          mv out/* out/urna/
+
       - name: subir artifact a Pages
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "out"
+          path: "out/urna"
 
       - name: deploy a GitHub Pages
         id: deployment
