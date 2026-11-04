@@ -6,7 +6,7 @@ import type { Election } from "@/types/election";
 
 export function ElectionCard({ election }: { election: Election }) {
   const isOngoing = election.status === "ongoing";
-  const top = election.candidates[0];
+  const top = election.candidates?.[0];
   return (
     <article
       className="group relative p-4 bg-white/5 border border-white/10 rounded-lg hover:border-neon-cyan/50 transition-all duration-300 hover:bg-white/10"

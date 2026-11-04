@@ -5,10 +5,13 @@ on:
     - cron: "0 * * * *"  # cada hora
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -22,14 +25,13 @@ jobs:
       - name: install deps
         run: npm ci
 
-      - name: run scraper
+      - name: run scraper (opencode-connected)
         run: npm run scrape
 
-      - name: commit changes
-        if: github.event_name == 'schedule' || github.event.inputs.commit == 'true'
+      - name: commit and push updated data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/elecciones.db
+          git add data/elecciones.json
           git commit -m "chore: actualizar elecciones (scrape automático)" || true
           git push || true

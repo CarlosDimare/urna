@@ -10,9 +10,9 @@ export function ElectionsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/elections")
+    fetch("/data/elections.json")
       .then((r) => r.json())
-      .then((data) => {
+      .then((data: any) => {
         setElections(data.elections || []);
         setLoading(false);
       })
@@ -45,7 +45,7 @@ export function ElectionsPage() {
 
         <div className="flex justify-between items-end mb-6 border-b border-white/10 pb-2">
           <div className="text-white/50 font-mono text-sm">
-            {elections.length} elección{elections.length !== 1 ? "es" : ""} activa{/* */}
+            {elections.length} elección{elections.length !== 1 ? "es" : ""}
           </div>
         </div>
 
@@ -57,7 +57,9 @@ export function ElectionsPage() {
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20">
               <div className="w-8 h-8 border-2 border-neon-cyan border-t-transparent rounded-full animate-[spin_1s_linear_infinite] mb-4"></div>
-              <p className="text-neon-cyan font-mono text-sm uppercase tracking-widest">cargando datos en vivo...</p>
+              <p className="text-neon-cyan font-mono text-sm uppercase tracking-widest">
+                cargando datos en vivo...
+              </p>
             </div>
           ) : (
             <ElectionList elections={elections} />

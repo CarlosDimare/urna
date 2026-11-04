@@ -29,6 +29,7 @@ export interface Election {
 }
 
 export interface ScrapedElection {
+  id?: string;
   title: string;
   organization: string;
   type: Election["type"];
@@ -45,4 +46,5 @@ export interface ScrapedElection {
 export interface ScrapedCandidate {
   name: string;
   list?: string;
+  votes?: number;
 }

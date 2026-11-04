@@ -1,17 +1,12 @@
 import { notFound } from "next/navigation";
-import { initDb, getElectionById } from "@/lib/db";
+import { getElectionById } from "@/lib/server-data";
 import { FlashHeader } from "@/components/ui";
 
-export async function generateStaticParams() {
-  initDb();
-  const elections = (globalThis as any).__dbElections || [];
-  return elections.map((e: any) => ({ id: e.id }));
-}
+import electionsData from "@/data/elections.json";
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
-  initDb();
-  const row = getElectionById(params.id);
-  return { title: row?.title || "Elección" };
+export function generateStaticParams() {
+  const elections = electionsData.elections as Array<{ id: string }>;
+  return elections.map((e) => ({ id: e.id }));
 }
 
 export default function ElectionDetailPage({
@@ -19,11 +14,12 @@ export default function ElectionDetailPage({
 }: {
   params: { id: string };
 }) {
-  initDb();
   const election = getElectionById(params.id);
   if (!election) notFound();
 
-  const candidates = (election.candidates || []).slice().sort((a: any, b: any) => (b.votes || 0) - (a.votes || 0));
+  const candidates = (election.candidates || [])
+    .slice()
+    .sort((a: any, b: any) => (b.votes || 0) - (a.votes || 0));
 
   return (
     <div className="min-h-screen bg-black text-white font-mono">
@@ -34,40 +30,67 @@ export default function ElectionDetailPage({
         </h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div className="bg-white/5 p-4 rounded border border-white/10">
-            <p className="text-[10px] font-bold text-neon-magenta uppercase mb-1">organización</p>
+            <p className="text-[10px] font-bold text-neon-magenta uppercase mb-1">
+              organización
+            </p>
             <p className="text-white">{election.organization}</p>
           </div>
           <div className="bg-white/5 p-4 rounded border border-white/10">
-            <p className="text-[10px] font-bold text-neon-cyan uppercase mb-1">tipo</p>
+            <p className="text-[10px] font-bold text-neon-cyan uppercase mb-1">
+              tipo
+            </p>
             <p className="text-white">{election.type}</p>
           </div>
           <div className="bg-white/5 p-4 rounded border border-white/10">
-            <p className="text-[10px] font-bold text-white/60 uppercase mb-1">estado</p>
+            <p className="text-[10px] font-bold text-white/60 uppercase mb-1">
+              estado
+            </p>
             <p className="text-neon-green font-bold">{election.status}</p>
           </div>
           <div className="bg-white/5 p-4 rounded border border-white/10">
-            <p className="text-[10px] font-bold text-white/60 uppercase mb-1">fecha</p>
+            <p className="text-[10px] font-bold text-white/60 uppercase mb-1">
+              fecha
+            </p>
             <p className="text-white">
-              {election.startDate ? new Date(election.startDate).toLocaleString("es-ES") : "—"}
+              {election.startDate
+                ? new Date(election.startDate).toLocaleString("es-ES")
+                : "—"}
             </p>
           </div>
         </div>
         {election.description && (
           <div className="mb-8">
-            <p className="text-[10px] font-bold text-white/60 uppercase mb-2">descripción</p>
-            <p className="text-white/90 leading-relaxed">{election.description}</p>
+            <p className="text-[10px] font-bold text-white/60 uppercase mb-2">
+              descripción
+            </p>
+            <p className="text-white/90 leading-relaxed">
+              {election.description}
+            </p>
           </div>
         )}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-4 border-b border-white/10 pb-2">candidaturas</h2>
+          <h2 className="text-2xl font-bold mb-4 border-b border-white/10 pb-2">
+            candidaturas
+          </h2>
           <div className="space-y-3">
             {candidates.map((c: any) => (
-              <div key={c.id} className="p-3 bg-white/5 rounded border border-white/10 flex justify-between items-start">
+              <div
+                key={c.id}
+                className="p-3 bg-white/5 rounded border border-white/10 flex justify-between items-start"
+              >
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <span className="font-bold text-white">{c.name}</span>
-                    {c.list && <span className="text-xs bg-neon-cyan/20 text-neon-cyan px-2 py-0.5 rounded">{c.list}</span>}
-                    {c.elected && <span className="text-xs bg-neon-green/20 text-neon-green px-2 py-0.5 rounded">electo</span>}
+                    {c.list && (
+                      <span className="text-xs bg-neon-cyan/20 text-neon-cyan px-2 py-0.5 rounded">
+                        {c.list}
+                      </span>
+                    )}
+                    {c.elected && (
+                      <span className="text-xs bg-neon-green/20 text-neon-green px-2 py-0.5 rounded">
+                        electo
+                      </span>
+                    )}
                   </div>
                   <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
                     <div

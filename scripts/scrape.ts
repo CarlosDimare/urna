@@ -1,15 +1,66 @@
-import { initDb, upsertElection } from "@/lib/db";
-import type { ScrapedElection } from "@/types/election";
+import fs from "fs";
+import path from "path";
+import { load, CheerioAPI } from "cheerio";
+import type { ScrapedElection, ScrapedCandidate } from "@/types/election";
 
-const SOURCES: Array<{
+const DB_PATH = path.join(process.cwd(), "data", "elecciones.json");
+const USER_AGENT =
+  "Mozilla/5.0 (compatible; EleccionesFlashcoreBot/1.0; +https://elecciones.local)";
+
+/* -------------------------------------------------------------------------- */
+// Fuentes de ejemplo. Reemplazá/agregá las URLs reales de cada país/organismo.
+/* -------------------------------------------------------------------------- */const SOURCES: Array<{
   name: string;
   url: string;
   type: ScrapedElection["type"];
+  /* selectores CSS de ejemplo; adaptá según cada sitio */
+  selectors?: {
+    title: string;
+    org: string;
+    status: string;
+    startDate: string;
+    endDate: string;
+    location: string;
+    description: string;
+    candidate: string;
+    candidateName: string;
+    candidateList: string;
+    candidateVotes: string;
+  };
 }> = [
-  { name: "Ejemplo Sindicato", url: "https://example.org/elecciones-sindicato", type: "union" },
-  { name: "Consejo Universitario", url: "https://example.org/elecciones-consejo", type: "university" },
-  { name: "Consejo de la Magistratura", url: "https://example.org/elecciones-magistratura", type: "magistrate" },
-  { name: "Club Deportivo", url: "https://example.org/elecciones-club", type: "club" },
+  {
+    name: "Ejemplo Sindicato",
+    url: "https://example.org/elecciones-sindicato",
+    type: "union",
+    selectors: {
+      title: "h1",
+      org: ".organizacion",
+      status: ".estado",
+      startDate: ".fecha-inicio",
+      endDate: ".fecha-fin",
+      location: ".lugar",
+      description: ".descripcion",
+      candidate: ".candidatura",
+      candidateName: ".nombre",
+      candidateList: ".lista",
+      candidateVotes: ".votos",
+    },
+  },
+  {
+    name: "Consejo Universitario",
+    url: "https://example.org/elecciones-consejo",
+    type: "university",
+  },
+  {
+    name: "Consejo de la Magistratura",
+    url: "https://example.org/elecciones-magistratura",
+    type: "magistrate",
+  },
+  {
+    name: "Club Deportivo",
+    url: "https://example.org/elecciones-club",
+    type: "club",
+  },
 ];
 
 function slugify(text: string): string {
@@ -27,26 +78,83 @@ function nowIso(): string {
 }
 
 async function fetchHtml(url: string): Promise<string> {
-  const res = await fetch(url, {
-    headers: {
-      "User-Agent": "Mozilla/5.0 (compatible; EleccionesFlashcoreBot/1.0; +https://elecciones.local)",
-    },
-  });
+  const res = await fetch(url, { headers: { "User-Agent": USER_AGENT } });
   if (!res.ok) throw new Error(`Fetch ${url} failed: ${res.status}`);
   return res.text();
 }
 
-function parseElectionFromHtml(html: string, source: (typeof SOURCES)[number]): ScrapedElection | null {
-  // Placeholder: aquí se usaría cheerio para extraer datos reales de cada fuente.
-  // No se inventan datos; se devuelve null si no hay parseo implementado.
-  return null;
+function parseElectionFromHtml(
+  html: string,
+  source: (typeof SOURCES)[number],
+): ScrapedElection | null {
+  const $ = load(html);
+  const sel = source.selectors;
+
+  const title = sel?.title ? $(sel.title).first().text().trim() : "";
+  const organization = sel?.org ? $(sel.org).first().text().trim() : source.name;
+  if (!title) return null;
+
+  const statusText = sel?.status ? $(sel.status).first().text().trim().toLowerCase() : "";
+  let status: ScrapedElection["status"] = "upcoming";
+  if (statusText.includes("en curso") || statusText.includes("ongoing") || statusText.includes("vivo")) status = "ongoing";
+  else if (statusText.includes("finaliz") || statusText.includes("completed")) status = "completed";
+
+  const startDate = sel?.startDate ? $(sel.startDate).first().attr("datetime") || $(sel.startDate).first().text().trim() : undefined;
+  const endDate = sel?.endDate ? $(sel.endDate).first().attr("datetime") || $(sel.endDate).first().text().trim() : undefined;
+  const location = sel?.location ? $(sel.location).first().text().trim() : undefined;
+  const description = sel?.description ? $(sel.description).first().text().trim() : undefined;
+
+  const candidates: ScrapedCandidate[] = [];
+  if (sel?.candidate) {
+    $(sel.candidate).each((_, el) => {
+      const $c = $(el);
+      const name = sel?.candidateName ? $c.find(sel.candidateName).first().text().trim() : $c.text().trim();
+      const list = sel?.candidateList ? $c.find(sel.candidateList).first().text().trim() : undefined;
+      const votesText = sel?.candidateVotes ? $c.find(sel.candidateVotes).first().text().trim() : "";
+      const votes = votesText ? parseInt(votesText.replace(/\D/g, ""), 10) : undefined;
+      if (name) candidates.push({ name, list, ...(votes != null ? { votes } : {}) });
+    });
+  }
+
+  const id = `elec-${slugify(title)}-${slugify(source.name)}`;
+
+  return {
+    id,
+    title,
+    organization,
+    type: source.type,
+    status,
+    startDate,
+    endDate,
+    location,
+    description,
+    sourceUrl: source.url,
+    sourceName: source.name,
+    candidates,
+  };
+}
+
+function readDb(): { elections: any[]; candidates: any[] } {
+  if (!fs.existsSync(DB_PATH)) return { elections: [], candidates: [] };
+  try {
+    return JSON.parse(fs.readFileSync(DB_PATH, "utf-8"));
+  } catch {
+    return { elections: [], candidates: [] };
+  }
+}
+
+function writeDb(data: { elections: any[]; candidates: any[] }) {
+  fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
+  fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
 }
 
 export async function runScrape() {
-  initDb();
+  const db = readDb();
   const now = nowIso();
   let inserted = 0;
   let updated = 0;
+
+  const existingById = new Map(db.elections.map((e: any) => [e.id, e]));
 
   for (const source of SOURCES) {
     let scraped: ScrapedElection | null = null;
@@ -54,50 +162,36 @@ export async function runScrape() {
       const html = await fetchHtml(source.url);
       scraped = parseElectionFromHtml(html, source);
     } catch (err) {
-      console.error(`Error scraping ${source.name}:`, err);
+      console.error(`Error scraping ${source.name} (${source.url}):`, (err as Error).message);
     }
     if (!scraped) continue;
 
-    const id = `elec-${slugify(scraped.title)}-${slugify(source.name)}`;
-    const status = scraped.status ?? "upcoming";
     const election = {
-      id,
-      title: scraped.title,
-      organization: scraped.organization,
-      type: scraped.type,
-      status,
-      startDate: scraped.startDate ?? null,
-      endDate: scraped.endDate ?? null,
-      location: scraped.location ?? null,
-      description: scraped.description ?? null,
-      sourceUrl: scraped.sourceUrl,
-      sourceName: scraped.sourceName,
-      totalVotes: null,
-      eligibleVoters: null,
+      ...scraped,
       updatedAt: now,
-      createdAt: now,
+      createdAt: existingById.get(scraped.id)?.createdAt || now,
     };
     const candRows = (scraped.candidates || []).map((c, i) => ({
-      id: `cand-${id}-${i}`,
-      election_id: id,
+      id: `cand-${scraped.id}-${i}`,
+      election_id: scraped.id,
       name: c.name,
       list: c.list ?? null,
-      votes: 0,
+      votes: c.votes ?? 0,
       percentage: 0,
       elected: 0,
     }));
 
-    // detectar si ya existía para contar inserted vs updated
-    const fs = await import("fs");
-    const path = await import("path");
-    const DB_PATH = path.join(process.cwd(), "data", "elecciones.json");
-    const existing = JSON.parse(fs.readFileSync(DB_PATH, "utf-8")).elections.find((e: any) => e.id === id);
+    const existed = existingById.has(scraped.id);
+    db.elections = db.elections.filter((e: any) => e.id !== scraped.id);
+    db.elections.push(election);
+    db.candidates = db.candidates.filter((c: any) => c.election_id !== scraped.id);
+    db.candidates.push(...candRows);
 
-    upsertElection(election, candRows);
-    if (existing) updated++; else inserted++;
+    if (existed) updated++; else inserted++;
   }
 
-  return { inserted, updated, at: now };
+  writeDb(db);
+  return { inserted, updated, at: now, total: db.elections.length };
 }
 
 if (require.main === module) {
