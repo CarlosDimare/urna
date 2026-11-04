@@ -53,7 +53,7 @@ jobs:
       - name: mover salida a /urna para GitHub Pages project site
         run: |
           mkdir -p out/urna
-          mv out/* out/urna/
+          find out -maxdepth 1 -mindepth 1 ! -name urna -exec mv {} out/urna/ \;
 
       - name: subir artifact a Pages
         uses: actions/upload-pages-artifact@v3
