@@ -40,18 +40,6 @@ export function FlashHeader() {
   );
 }
 
-export function GlitchText({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return (
-    <motion.span
-      className={`font-mono font-bold text-neon-cyan ${className}`}
-      animate={{ y: [0, -2, 2, 0] }}
-      transition={{ duration: 0.2, repeat: Infinity, repeatType: "reverse" }}
-    >
-      {children}
-    </motion.span>
-  );
-}
-
 export function StatusBadge({ status }: { status: string }) {
   const variants: Record<string, { color: string; label: string }> = {
     upcoming: { color: "bg-neon-yellow/10 text-neon-yellow border-neon-yellow/30", label: "próxima" },

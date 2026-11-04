@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getAllElections } from "@/lib/server-data";
 import { ElectionCard } from "@/components/ElectionCard";
 
@@ -8,24 +9,21 @@ export default function ElectionsIndexPage() {
       <header className="fixed top-0 left-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <a
-              href="/"
-              className="flex items-center gap-2 text-neon-cyan hover:text-neon-magenta transition-colors"
-            >
-              <span className="font-mono font-bold text-xl tracking-tighter">
+            <Link href="/" className="flex items-center gap-2 group">
+              <span className="text-neon-cyan font-mono font-bold text-xl tracking-tighter group-hover:glitch transition-all">
                 ELEC
               </span>
               <span className="text-white font-mono font-bold text-xl tracking-tighter">
                 CORE
               </span>
-            </a>
+            </Link>
             <nav className="flex items-center gap-6 hidden md:flex">
-              <a
+              <Link
                 href="/elecciones"
                 className="text-neon-magenta font-mono text-sm uppercase tracking-widest hover:text-white transition-colors"
               >
                 elecciones
-              </a>
+              </Link>
               <a
                 href="#feed"
                 className="text-white/60 font-mono text-xs uppercase tracking-widest hover:text-white transition-colors"
@@ -52,12 +50,12 @@ export default function ElectionsIndexPage() {
             </p>
           </div>
           <div className="flex gap-2">
-            <a
+            <Link
               href="/elecciones"
               className="px-4 py-2 rounded bg-white text-black font-bold text-xs uppercase hover:bg-neon-cyan transition-colors"
             >
               actualizar
-            </a>
+            </Link>
           </div>
         </div>
 
