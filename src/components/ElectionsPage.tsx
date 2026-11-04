@@ -10,7 +10,8 @@ export function ElectionsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/data/elections.json")
+    const base = process.env.NEXT_PUBLIC_BASE_PATH || "";
+    fetch(`${base}/data/elections.json`)
       .then((r) => r.json())
       .then((data: any) => {
         setElections(data.elections || []);
