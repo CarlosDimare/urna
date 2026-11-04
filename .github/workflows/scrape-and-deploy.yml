@@ -34,7 +34,7 @@ jobs:
         run: npm ci
 
       - name: ejecutar scraper (datos reales en tiempo real)
-        run: npx tsx scripts/scrape.ts
+        run: npx tsx scripts/scrape.ts || true
 
       - name: exportar datos para build estático
         run: npx tsx scripts/export-data.ts
@@ -44,8 +44,12 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -f data/elecciones.json
-          git commit -m "chore: actualizar elecciones (scrape automático cada 30 min)" || true
-          git push || true
+          if git diff --cached --quiet; then
+            echo "No hay cambios en los datos, saltando commit"
+          else
+            git commit -m "chore: actualizar elecciones (scrape automático cada 30 min)"
+            git push || true
+          fi
 
       - name: build sitio estático
         run: npm run build
