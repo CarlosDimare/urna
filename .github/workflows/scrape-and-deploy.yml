@@ -1,0 +1,61 @@
+name: scrape y deploy elecciones
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"  # cada 30 minutos
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  scrape-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: install deps
+        run: npm ci
+
+      - name: ejecutar scraper (datos reales en tiempo real)
+        run: npx tsx scripts/scrape.ts
+
+      - name: exportar datos para build estático
+        run: npx tsx scripts/export-data.ts
+
+      - name: commit datos si cambiaron
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/elecciones.json public/data/elections.json src/data/elections.json
+          git commit -m "chore: actualizar elecciones (scrape automático cada 30 min)" || true
+          git push || true
+
+      - name: build sitio estático
+        run: npm run build
+
+      - name: subir artifact a Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "out"
+
+      - name: deploy a GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

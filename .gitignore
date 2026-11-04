@@ -1,8 +1,9 @@
 node_modules/
 .next/
 out/
-data/elecciones.json
 *.log
 .env
 .env.local
 .env.*.local
+public/data/
+src/data/elections.json
