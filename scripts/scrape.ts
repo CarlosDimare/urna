@@ -29,6 +29,21 @@ const USER_AGENT =
   };
 }> = [
   {
+    name: "FACA - Consejo de la Magistratura",
+    url: "https://faca.org.ar/elecciones/resultados",
+    type: "magistrate",
+  },
+  {
+    name: "UNS - Universidad Nacional del Sur",
+    url: "https://www.uns.edu.ar/noticias/2025/7574",
+    type: "university",
+  },
+  {
+    name: "Línea Sindical - CONADU",
+    url: "https://www.lineasindical.com.ar/renovacin-sindical-quines-nuevos-dirigentes-pusieron-frente-gremios-clave-2025-n-1758720.html",
+    type: "union",
+  },
+  {
     name: "Ejemplo Sindicato",
     url: "https://example.org/elecciones-sindicato",
     type: "union",
@@ -50,11 +65,6 @@ const USER_AGENT =
     name: "Consejo Universitario",
     url: "https://example.org/elecciones-consejo",
     type: "university",
-  },
-  {
-    name: "Consejo de la Magistratura",
-    url: "https://example.org/elecciones-magistratura",
-    type: "magistrate",
   },
   {
     name: "Club Deportivo",

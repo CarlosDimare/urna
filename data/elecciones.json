@@ -1,4 +1,129 @@
 {
-  "elections": [],
-  "candidates": []
+  "elections": [
+    {
+      "id": "elec-elecciones-consejo-de-la-magistratura-representantes-de-la-abogacia-2026-opencode",
+      "title": "Elecciones Consejo de la Magistratura - Representantes de la Abogacía 2026",
+      "organization": "Federación Argentina de Colegios de Abogados (FACA)",
+      "type": "magistrate",
+      "status": "completed",
+      "startDate": "2026-10-20T08:00:00-03:00",
+      "endDate": "2026-10-20T18:00:00-03:00",
+      "location": "Todo el país - voto por correspondencia y presencial",
+      "description": "Elecciones para renovar los 4 representantes de los abogados ante el Consejo de la Magistratura de la Nación. Período 2026-2030.",
+      "sourceUrl": null,
+      "sourceName": null,
+      "totalVotes": null,
+      "eligibleVoters": null,
+      "updatedAt": "2026-11-04T19:47:55.041Z",
+      "createdAt": "2026-11-04T19:47:55.041Z"
+    },
+    {
+      "id": "elec-elecciones-uns-2025-consejo-superior-y-decanatos-opencode",
+      "title": "Elecciones UNS 2025 - Consejo Superior y Decanatos",
+      "organization": "Universidad Nacional del Sur",
+      "type": "university",
+      "status": "upcoming",
+      "startDate": "2025-11-14T08:00:00-03:00",
+      "endDate": "2025-11-14T18:00:00-03:00",
+      "location": "Bahía Blanca, Provincia de Buenos Aires",
+      "description": "Elecciones UNS 2025: se renuevan los cuerpos del cogobierno y los decanatos de los Departamentos. Docentes, nodocentes y estudiantes elegirán representantes en el Consejo Superior y la Asamblea Universitaria.",
+      "sourceUrl": null,
+      "sourceName": null,
+      "totalVotes": null,
+      "eligibleVoters": null,
+      "updatedAt": "2026-11-04T19:47:55.443Z",
+      "createdAt": "2026-11-04T19:47:55.443Z"
+    },
+    {
+      "id": "elec-elecciones-conadu-2025-secretaria-general-opencode",
+      "title": "Elecciones CONADU 2025 - Secretaría General",
+      "organization": "Federación Nacional de Docentes Universitarios (CONADU)",
+      "type": "union",
+      "status": "completed",
+      "startDate": "2025-01-05T00:00:00-03:00",
+      "endDate": "2025-01-05T23:59:00-03:00",
+      "location": "Nacional",
+      "description": "Clara Chevalier ganó las elecciones de CONADU y puso fin a 20 años de hegemonía de Carlos De Feo, imponiéndose por un voto (62 a 61).",
+      "sourceUrl": null,
+      "sourceName": null,
+      "totalVotes": null,
+      "eligibleVoters": null,
+      "updatedAt": "2026-11-04T19:47:57.091Z",
+      "createdAt": "2026-11-04T19:47:57.091Z"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "cand-elec-elecciones-consejo-de-la-magistratura-representantes-de-la-abogacia-2026-opencode-0",
+      "election_id": "elec-elecciones-consejo-de-la-magistratura-representantes-de-la-abogacia-2026-opencode",
+      "name": "Unidad en Defensa de la Abogacía",
+      "list": "Lista 1",
+      "votes": 11237,
+      "percentage": 0,
+      "elected": 0
+    },
+    {
+      "id": "cand-elec-elecciones-consejo-de-la-magistratura-representantes-de-la-abogacia-2026-opencode-1",
+      "election_id": "elec-elecciones-consejo-de-la-magistratura-representantes-de-la-abogacia-2026-opencode",
+      "name": "Abogacía Unida y Dignidad Profesional",
+      "list": "Lista 2",
+      "votes": 10593,
+      "percentage": 0,
+      "elected": 0
+    },
+    {
+      "id": "cand-elec-elecciones-consejo-de-la-magistratura-representantes-de-la-abogacia-2026-opencode-2",
+      "election_id": "elec-elecciones-consejo-de-la-magistratura-representantes-de-la-abogacia-2026-opencode",
+      "name": "Abogacía Federal",
+      "list": "Lista 3",
+      "votes": 8737,
+      "percentage": 0,
+      "elected": 0
+    },
+    {
+      "id": "cand-elec-elecciones-consejo-de-la-magistratura-representantes-de-la-abogacia-2026-opencode-3",
+      "election_id": "elec-elecciones-consejo-de-la-magistratura-representantes-de-la-abogacia-2026-opencode",
+      "name": "Abogacía por la Libertad",
+      "list": "Lista 4",
+      "votes": 2506,
+      "percentage": 0,
+      "elected": 0
+    },
+    {
+      "id": "cand-elec-elecciones-uns-2025-consejo-superior-y-decanatos-opencode-0",
+      "election_id": "elec-elecciones-uns-2025-consejo-superior-y-decanatos-opencode",
+      "name": "Lista oficialista",
+      "list": "A",
+      "votes": 0,
+      "percentage": 0,
+      "elected": 0
+    },
+    {
+      "id": "cand-elec-elecciones-uns-2025-consejo-superior-y-decanatos-opencode-1",
+      "election_id": "elec-elecciones-uns-2025-consejo-superior-y-decanatos-opencode",
+      "name": "Lista opositora",
+      "list": "B",
+      "votes": 0,
+      "percentage": 0,
+      "elected": 0
+    },
+    {
+      "id": "cand-elec-elecciones-conadu-2025-secretaria-general-opencode-0",
+      "election_id": "elec-elecciones-conadu-2025-secretaria-general-opencode",
+      "name": "Clara Chevalier",
+      "list": "Unidad en Defensa de la Abogacía",
+      "votes": 62,
+      "percentage": 0,
+      "elected": 0
+    },
+    {
+      "id": "cand-elec-elecciones-conadu-2025-secretaria-general-opencode-1",
+      "election_id": "elec-elecciones-conadu-2025-secretaria-general-opencode",
+      "name": "Carlos De Feo",
+      "list": "Lista oficialismo",
+      "votes": 61,
+      "percentage": 0,
+      "elected": 0
+    }
+  ]
 }
